@@ -1,1 +1,1 @@
-repo for coursework in cap4630 artificial intelligence 
+Guides Pacman to all the food pieces using the Repetitive Nearest Neighbors algorithm.
