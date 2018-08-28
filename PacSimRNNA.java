@@ -59,9 +59,14 @@ public class PacSimRNNA implements PacAction
 
             System.out.println("Pac-Mac current at: [ " + pc.getLoc().x + ", " + pc.getLoc().y + " ]");
             System.out.println("Setting new target  : [ " + target.x + ", " + target.y + " ]");
-            
-            
         }
+
+        Point next = path.remove(0);
+        PacFace face = PacUtils.direction(pc.getLoc(), next);
+
+        System.out.println("%5d : From [ %2d, %2d ] go ");
+
+        
     }
 
 }
