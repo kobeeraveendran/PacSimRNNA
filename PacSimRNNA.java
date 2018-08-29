@@ -2,6 +2,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.PriorityQueue;
 
 import pacsim.BFSPath;
 import pacsim.PacAction;
@@ -71,6 +72,12 @@ public class PacSimRNNA implements PacAction
             matrix[i][0] = costFromPac;          
         }
 
+        public static RNNA(int[][] costMatrix)
+        {
+            // from pacman to food pellets
+            int pacToFoodCost = 
+        }
+
         // print cost matrix
         System.out.println("Cost table:");
         
@@ -117,13 +124,24 @@ public class PacSimRNNA implements PacAction
 
             // TODO: generate solution plan using RNNA
             
+
+
             // plan generation timer
-            long startTime = System.nanoTime();
+            long startTime = System.currentTimeMillis();
 
             // initialize queue as DS for containing visited nodes
 
-            long timeElapsed = System.nanoTime() - startTime;
-            timeElapsed = TimeUnit.NANOSECONDS.toMillis(timeElapsed);
+            // iterate through n food steps and generate plan
+            for(int i = 0; i < foodArray.size(); i++)
+            {
+                System.out.println("Population at step " + (i + 1) + ":");
+                
+            }
+
+            long timeElapsed = System.currentTimeMillis() - startTime;
+
+            // generate plan here
+            System.out.println("Number of food dots collected.");
 
             System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
         }
