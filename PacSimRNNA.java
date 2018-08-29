@@ -82,6 +82,8 @@ public class PacSimRNNA implements PacAction
             System.out.println();
             
         }
+
+        return matrix;
     }
 
     @Override
@@ -98,11 +100,20 @@ public class PacSimRNNA implements PacAction
         // decision to be made when deciding which food to go for next
         if (path.isEmpty())
         {
-            Point target = PacUtils.nearestFood(pc.getLoc(), grid);
-            path = BFSPath.getPath(grid, pc.getLoc(), target);
+            // create and print cost matrix
+            int costMatrix = createCostMatrix(pc, grid);
+            
+            // create and print food array
+            List<Point> foodArray = PacUtils.findFood(state);
 
-            System.out.println("Pac-Mac current at: [ " + pc.getLoc().x + ", " + pc.getLoc().y + " ]");
-            System.out.println("Setting new target  : [ " + target.x + ", " + target.y + " ]");
+            System.out.println("Food Array:\n");
+
+            for(i = 0; i < foodArray.size(); i++)
+            {
+                System.out.println(i + " : (" + foodArray.get(i).x + "," + foodArray.get(i).y + ")");
+            }
+
+            // TODO: generate solution plan using RNNA
         }
 
         Point next = path.remove(0);
