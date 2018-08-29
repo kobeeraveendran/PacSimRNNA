@@ -1,6 +1,8 @@
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import pacsim.BFSPath;
 import pacsim.PacAction;
 import pacsim.PacCell;
@@ -114,6 +116,16 @@ public class PacSimRNNA implements PacAction
             }
 
             // TODO: generate solution plan using RNNA
+            
+            // plan generation timer
+            long startTime = System.nanoTime();
+
+            // initialize queue as DS for containing visited nodes
+
+            long timeElapsed = System.nanoTime() - startTime;
+            timeElapsed = TimeUnit.NANOSECONDS.toMillis(timeElapsed);
+
+            System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
         }
 
         Point next = path.remove(0);
