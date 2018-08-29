@@ -2,7 +2,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.PriorityQueue;
+import java.util.Queue;
 
 import pacsim.BFSPath;
 import pacsim.PacAction;
@@ -42,7 +42,7 @@ public class PacSimRNNA implements PacAction
     {
         simTime = 0;
         path = new ArrayList();
-        numMoves = 0;
+        List<Point> solution = null;
     }
 
     public static int[][] createCostMatrix(PacmanCell pc, PacCell[][] grid)
@@ -72,10 +72,19 @@ public class PacSimRNNA implements PacAction
             matrix[i][0] = costFromPac;          
         }
 
-        public static RNNA(int[][] costMatrix)
+        public static RNNA(int[][] costMatrix, PacCell[][] foodArray)
         {
             // from pacman to food pellets
-            int pacToFoodCost = 
+            int numNodes = costMatrix.size();
+            int[] pacToFoodCost = new int[numNodes];
+            Queue<PacCell> nodes = new Queue(numNodes);
+            
+            for(i = 0; i < numNodes + 1; i++)
+            {
+                pacToFoodCost[i] = costMatrix[0][i];
+                nodes.add(foodArray[i]);
+            }
+
         }
 
         // print cost matrix
@@ -127,18 +136,19 @@ public class PacSimRNNA implements PacAction
 
 
             // plan generation timer
-            long startTime = System.currentTimeMillis();
 
-            // initialize queue as DS for containing visited nodes
-
-            // iterate through n food steps and generate plan
-            for(int i = 0; i < foodArray.size(); i++)
+            if(solution != null)
             {
-                System.out.println("Population at step " + (i + 1) + ":");
-                
-            }
+                long startTime = System.currentTimeMillis();
 
-            long timeElapsed = System.currentTimeMillis() - startTime;
+                for(int i = 0; i < foodArray.size(); i++)
+                {
+                    System.out.println("Population at step " + (i + 1) + ":");
+                }
+
+                long timeElapsed = System.currentTimeMillis() - startTime;
+                System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
+            }
 
             // generate plan here
             System.out.println("Number of food dots collected.");
