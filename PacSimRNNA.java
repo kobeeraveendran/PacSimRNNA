@@ -17,6 +17,48 @@ import pacsim.PacmanCell;
  * Author: Kobee Raveendran
  */
 
+private class PopulationNode
+{
+    private int cost;
+    private List<Point> path;
+
+    private PopulationNode()
+    {
+        cost = 0;
+        path = new ArrayList<Point>();
+    }
+
+    private getCost()
+    {
+        return this.cost;
+    }
+
+    private setCost(int cost)
+    {
+        this.cost = cost;
+    }
+
+    private getPath()
+    {
+        return this.path;
+    }
+
+    private setPath(List<Point> path)
+    {
+        this.path = path;
+    }
+
+    private addToPath(Point point)
+    {
+        this.path.add(point);
+    }
+
+    private getStep(int step)
+    {
+        return path.get(step);
+    }
+}
+
 public class PacSimRNNA implements PacAction
 {
 
@@ -42,7 +84,6 @@ public class PacSimRNNA implements PacAction
     {
         simTime = 0;
         path = new ArrayList();
-        List<Point> solution = null;
     }
 
     public static int[][] createCostMatrix(PacmanCell pc, PacCell[][] grid)
@@ -70,21 +111,6 @@ public class PacSimRNNA implements PacAction
             // fill in column A and row A (from Pacman to each food cell)
             matrix[0][i] = costFromPac;
             matrix[i][0] = costFromPac;          
-        }
-
-        public static RNNA(int[][] costMatrix, PacCell[][] foodArray)
-        {
-            // from pacman to food pellets
-            int numNodes = costMatrix.size();
-            int[] pacToFoodCost = new int[numNodes];
-            Queue<PacCell> nodes = new Queue(numNodes);
-            
-            for(i = 0; i < numNodes + 1; i++)
-            {
-                pacToFoodCost[i] = costMatrix[0][i];
-                nodes.add(foodArray[i]);
-            }
-
         }
 
         // print cost matrix
@@ -119,7 +145,7 @@ public class PacSimRNNA implements PacAction
         if (path.isEmpty())
         {
             // create and print cost matrix
-            int costMatrix = createCostMatrix(pc, grid);
+            int[][] costMatrix = createCostMatrix(pc, grid);
             
             // create and print food array
             List<Point> foodArray = PacUtils.findFood(state);
@@ -133,6 +159,16 @@ public class PacSimRNNA implements PacAction
 
             // TODO: generate solution plan using RNNA
             
+            // from pacman to food pellets
+            int numNodes = costMatrix.length;
+            int[] pacToFoodCost = new int[numNodes];
+            Queue<PacCell> nodes = new Queue(numNodes);
+            
+            for(i = 0; i < numNodes + 1; i++)
+            {
+                pacToFoodCost[i] = costMatrix[0][i];
+                nodes.add(foodArray.get(i));
+            }
 
 
             // plan generation timer
