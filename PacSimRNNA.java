@@ -1,7 +1,7 @@
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.Queue;
 
 import pacsim.BFSPath;
@@ -21,11 +21,14 @@ private class PopulationNode
 {
     private int cost;
     private List<Point> path;
+    private HashMap<Point, Integer> map;
 
     private PopulationNode()
     {
         cost = 0;
         path = new ArrayList<Point>();
+        map = new HashMap<>();
+
     }
 
     private getCost()
@@ -36,6 +39,16 @@ private class PopulationNode
     private setCost(int cost)
     {
         this.cost = cost;
+    }
+
+    private getPointCost(Point point)
+    {
+        return map.get(point);
+    }
+
+    private addPointCost(Point point, int cost)
+    {
+        map.put(point, cost);
     }
 
     private getPath()
