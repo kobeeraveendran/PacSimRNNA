@@ -23,7 +23,7 @@ private class PopulationNode
     private List<Point> path;
     private HashMap<Point, Integer> map;
 
-    private PopulationNode()
+    public PopulationNode()
     {
         cost = 0;
         path = new ArrayList<Point>();
@@ -47,8 +47,15 @@ private class PopulationNode
         return map.get(point);
     }
 
-    private addPointCost(Point point, int cost)
+    private addPointCost(int i, int cost)
     {
+        Point point = this.path.get(i);
+        map.put(point, cost);
+    }
+
+    private setPointCost(int i, int cost)
+    {
+        Point point = this.path.get(i);
         map.put(point, cost);
     }
 
@@ -202,17 +209,22 @@ public class PacSimRNNA implements PacAction
                 System.out.println("Population at step " + i + " : ");
 
                 ArrayList<PopulationNode> population = new ArrayList<>();
+                PopulationNode currNode = new PopulationNode();
 
                 if(i == 0)
                 {
-                    for(j = 0; j < numNodes; j++)
-                    {
-                        PopulationNode currNode = population.get(j);
+                    currNode.addToPath(new Point(foodArray.get(i).x, foodArray.get(i).y));
+                    currNode.setCost(costMatrix[0][i]);
+                    
+                    System.out.print(i + " : cost=" + currNode.getCost());
+                    System.out.print(" : [(" + currNode.getX(0) + "," + currNode.getY(0) + ")");
+                    System.out.println("," + currNode.getPointCost(0) + "]");
+                }
 
-                        System.out.print(i + " : cost=" + currNode.getCost());
-                        System.out.print(" : [(" + currNode.getX() + currNode.getY());
-                        System.out.println("," + currNode.getPointCost(0) + "]");
-                    }
+                else
+                {
+                    // TODO: write code to show full node path
+                    continue;
                 }
             }
 
