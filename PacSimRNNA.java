@@ -271,12 +271,24 @@ public class PacSimRNNA implements PacAction
 
                         Point nearestFood = foodArray(minIndex);
 
-                        currNode.addToPath(new Point(nearestFood));
-                        currNode.setPointCost(currNode.getPathLength(), minCost);
+                        currNode.addToPath(nearestFood);
+                        currNode.setPointCost(nearestFood, minCost);
+                        currNode.setCost(currNode.getCost() + minCost);
                         
                     }
-                    continue;
+                    
+                    System.out.print(i + " : cost=" + currNode.getCost());
+
+                    for(int j = 0; j < currNode.getPathLength(); j++)
+                    {
+                        System.out.print("[(" + currNode.getX(j) + currNode.getY(j) + ")]");
+                        System.out.print("," + currNode.getPointCost + "]");    
+                    }
+                    
+                    System.out.print("\n");
                 }
+
+                population.add(currNode);
             }
 
             // generate plan here
