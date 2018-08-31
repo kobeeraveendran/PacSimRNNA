@@ -31,6 +31,11 @@ private class PopulationNode
 
     }
 
+    private getPathLength()
+    {
+        return this.path.size();
+    }
+
     private getCost()
     {
         return this.cost;
@@ -252,6 +257,9 @@ public class PacSimRNNA implements PacAction
                         }
 
                         Point nearestFood = foodArray(minIndex);
+
+                        currNode.addToPath(new Point(nearestFood));
+                        currNode.setPointCost(currNode.getPathLength(), minCost);
                         
                     }
                     continue;
