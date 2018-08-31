@@ -20,15 +20,22 @@ import pacsim.PacmanCell;
 private class PopulationNode
 {
     private int cost;
-    private List<Point> path;
+    private Arraylist<Point> path;
     private HashMap<Point, Integer> map;
 
     public PopulationNode()
     {
         cost = 0;
         path = new ArrayList<Point>();
-        map = new HashMap<>();
+        map = new HashMap<Point, Integer>();
 
+    }
+
+    public PopulationNode(int cost)
+    {
+        this.cost = cost;
+        path = new ArrayList<Point>();
+        map = new HashMap<Point, Integer>();
     }
 
     private getPathLength()
@@ -49,6 +56,11 @@ private class PopulationNode
     private getPointCost(int i)
     {
         Point point = this.path.get(i);
+        return map.get(point);
+    }
+
+    private getPointCost(Point point)
+    {
         return map.get(point);
     }
 
