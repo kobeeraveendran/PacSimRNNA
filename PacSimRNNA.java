@@ -47,7 +47,7 @@ private class PopulationNode
         return map.get(point);
     }
 
-    private addPointCost(int i, int cost)
+    private appendPointCost(int i, int cost)
     {
         Point point = this.path.get(i);
         map.put(point, cost);
@@ -57,6 +57,11 @@ private class PopulationNode
     {
         Point point = this.path.get(i);
         map.put(point, cost);
+    }
+
+    private getPoint(int i)
+    {
+        return this.path.get(i);
     }
 
     private getX(int i)
@@ -211,6 +216,7 @@ public class PacSimRNNA implements PacAction
                 ArrayList<PopulationNode> population = new ArrayList<>();
                 PopulationNode currNode = new PopulationNode();
 
+                // first step (from pacman to each of the food cells)
                 if(i == 0)
                 {
                     currNode.addToPath(new Point(foodArray.get(i).x, foodArray.get(i).y));
@@ -223,7 +229,31 @@ public class PacSimRNNA implements PacAction
 
                 else
                 {
-                    // TODO: write code to show full node path
+                    // TODO: perform RNNA to determine path to the remaining food cells
+                    Queue<Point> rnnaq = new LinkedList<>();
+
+                    // check cost to reach each other food cell and choose the one(s) with the lowest cost
+                    for(int j = 1; j < costMatrix.length; j++)
+                    {
+                        PopulationNode leastCostNode = new PopulationNode();
+                        currNodeCosts = costMatrix[j][0];
+
+                        int minCost = Integer.MAX_VALUE;
+                        int minIndex = j;
+
+                        // find min cost among other food cells
+                        for(int k = 0; k < foodArray.size() && k + 1 != j; k++)
+                        {
+                            if(costMatrix[j][k] < minCost)
+                            {
+                                minCost = costMatrix[j][k];
+                                minIndex = k;
+                            }
+                        }
+
+                        Point nearestFood = foodArray(minIndex);
+                        
+                    }
                     continue;
                 }
             }
