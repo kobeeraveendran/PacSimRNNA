@@ -201,6 +201,7 @@ public class PacSimRNNA implements PacAction
             // TODO: generate solution plan using RNNA
             
             // from pacman to food pellets
+            /*
             int numNodes = costMatrix.length;
             int[] pacToFoodCost = new int[numNodes];
             Queue<PacCell> nodes = new Queue(numNodes);
@@ -210,7 +211,7 @@ public class PacSimRNNA implements PacAction
                 pacToFoodCost[i] = costMatrix[0][i];
                 nodes.add(foodArray.get(i));
             }
-
+            */
 
             // plan generation timer
 
