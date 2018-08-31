@@ -41,14 +41,25 @@ private class PopulationNode
         this.cost = cost;
     }
 
-    private getPointCost(Point point)
+    private getPointCost(int i)
     {
+        Point point = this.path.get(i);
         return map.get(point);
     }
 
     private addPointCost(Point point, int cost)
     {
         map.put(point, cost);
+    }
+
+    private getX(int i)
+    {
+        return this.path.get(i).x;
+    }
+
+    private getY(int i)
+    {
+        return this.path.get(i).y;
     }
 
     private getPath()
@@ -186,17 +197,23 @@ public class PacSimRNNA implements PacAction
 
             // plan generation timer
 
-            if(solution != null)
+            for(i = 0; i < numNodes; i++)
             {
-                long startTime = System.currentTimeMillis();
+                System.out.println("Population at step " + i + " : ");
 
-                for(int i = 0; i < foodArray.size(); i++)
+                ArrayList<PopulationNode> population = new ArrayList<>();
+
+                if(i == 0)
                 {
-                    System.out.println("Population at step " + (i + 1) + ":");
-                }
+                    for(j = 0; j < numNodes; j++)
+                    {
+                        PopulationNode currNode = population.get(j);
 
-                long timeElapsed = System.currentTimeMillis() - startTime;
-                System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
+                        System.out.print(i + " : cost=" + currNode.getCost());
+                        System.out.print(" : [(" + currNode.getX() + currNode.getY());
+                        System.out.println("," + currNode.getPointCost(0) + "]");
+                    }
+                }
             }
 
             // generate plan here
