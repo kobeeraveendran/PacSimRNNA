@@ -212,11 +212,13 @@ public class PacSimRNNA implements PacAction
 
             // plan generation timer
 
+            long startTime = System.currentTimeMillis();
+            ArrayList<PopulationNode> population = new ArrayList<>();
+
             for(i = 0; i < numNodes; i++)
             {
-                System.out.println("Population at step " + i + " : ");
-
-                ArrayList<PopulationNode> population = new ArrayList<>();
+                System.out.println("Population at step " + (i + 1) + " :");
+                
                 PopulationNode currNode = new PopulationNode();
 
                 // first step (from pacman to each of the food cells)
@@ -278,6 +280,8 @@ public class PacSimRNNA implements PacAction
 
             // generate plan here
             System.out.println("Number of food dots collected.");
+
+            long timeElapsed = System.currentTimeMillis() - startTime;
 
             System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
         }
