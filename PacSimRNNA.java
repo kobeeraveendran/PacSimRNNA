@@ -38,70 +38,75 @@ public class PopulationNode
         map = new HashMap<Point, Integer>();
     }
 
-    private int getPathLength()
+    public int getPathLength()
     {
         return this.path.size();
     }
 
-    private int getCost()
+    public int getCost()
     {
         return this.cost;
     }
 
-    private void setCost(int cost)
+    public void setCost(int cost)
     {
         this.cost = cost;
     }
 
-    private int getPointCost(int i)
+    public int getPointCost(int i)
     {
         Point point = this.path.get(i);
         return map.get(point);
     }
 
-    private int getPointCost(Point point)
+    public int getPointCost(Point point)
     {
         return map.get(point);
     }
 
-    private void appendPointCost(int i, int cost)
+    public void appendPointCost(int i, int cost)
     {
         Point point = this.path.get(i);
         map.put(point, cost);
     }
 
-    private void setPointCost(int i, int cost)
+    public void setPointCost(int i, int cost)
     {
         Point point = this.path.get(i);
         map.put(point, cost);
     }
 
-    private Point getPoint(int i)
+    public void setPointCost(Point point, int cost)
+    {
+        map.put(point, cost);
+    }
+
+    public Point getPoint(int i)
     {
         return this.path.get(i);
     }
 
-    private int getX(int i)
+    public int getX(int i)
     {
         return this.path.get(i).x;
     }
 
-    private int getY(int i)
+    public int getY(int i)
     {
         return this.path.get(i).y;
     }
 
-    private List<Point> getPath()
+    public List<Point> getPath()
     {
         return this.path;
     }
 
-    private void setPath(List<Point> path)
+    public void setPath(List<Point> path)
     {
         this.path = path;
     }
 
-    private void addToPath(Point point)
+    public void addToPath(Point point)
     {
         this.path.add(point);
     }
