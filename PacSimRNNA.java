@@ -17,7 +17,7 @@ import pacsim.PacmanCell;
  * Author: Kobee Raveendran
  */
 
-private class PopulationNode
+public class PopulationNode
 {
     private int cost;
     private Arraylist<Point> path;
@@ -38,77 +38,72 @@ private class PopulationNode
         map = new HashMap<Point, Integer>();
     }
 
-    private getPathLength()
+    private int getPathLength()
     {
         return this.path.size();
     }
 
-    private getCost()
+    private int getCost()
     {
         return this.cost;
     }
 
-    private setCost(int cost)
+    private void setCost(int cost)
     {
         this.cost = cost;
     }
 
-    private getPointCost(int i)
+    private int getPointCost(int i)
     {
         Point point = this.path.get(i);
         return map.get(point);
     }
 
-    private getPointCost(Point point)
+    private int getPointCost(Point point)
     {
         return map.get(point);
     }
 
-    private appendPointCost(int i, int cost)
+    private void appendPointCost(int i, int cost)
     {
         Point point = this.path.get(i);
         map.put(point, cost);
     }
 
-    private setPointCost(int i, int cost)
+    private void setPointCost(int i, int cost)
     {
         Point point = this.path.get(i);
         map.put(point, cost);
     }
 
-    private getPoint(int i)
+    private Point getPoint(int i)
     {
         return this.path.get(i);
     }
 
-    private getX(int i)
+    private int getX(int i)
     {
         return this.path.get(i).x;
     }
 
-    private getY(int i)
+    private int getY(int i)
     {
         return this.path.get(i).y;
     }
 
-    private getPath()
+    private List<Point> getPath()
     {
         return this.path;
     }
 
-    private setPath(List<Point> path)
+    private void setPath(List<Point> path)
     {
         this.path = path;
     }
 
-    private addToPath(Point point)
+    private void addToPath(Point point)
     {
         this.path.add(point);
-    }
-
-    private getStep(int step)
-    {
-        return path.get(step);
     }
 }
 
