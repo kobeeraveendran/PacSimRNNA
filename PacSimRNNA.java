@@ -2,6 +2,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import pacsim.BFSPath;
@@ -10,6 +11,7 @@ import pacsim.PacCell;
 import pacsim.PacFace;
 import pacsim.PacUtils;
 import pacsim.PacmanCell;
+import pacsim.PacSim;
 
 /*
  * University of Central Florida
@@ -17,10 +19,10 @@ import pacsim.PacmanCell;
  * Author: Kobee Raveendran
  */
 
-public class PopulationNode
+class PopulationNode
 {
     private int cost;
-    private Arraylist<Point> path;
+    private ArrayList<Point> path;
     private HashMap<Point, Integer> map;
 
     public PopulationNode()
@@ -101,7 +103,7 @@ public class PopulationNode
         return this.path;
     }
 
-    public void setPath(List<Point> path)
+    public void setPath(ArrayList<Point> path)
     {
         this.path = path;
     }
@@ -115,7 +117,7 @@ public class PopulationNode
 public class PacSimRNNA implements PacAction
 {
 
-    private List<Point> path;
+    private ArrayList<Point> path;
     private int simTime;
 
     public PacSimRNNA(String fname)
@@ -136,7 +138,7 @@ public class PacSimRNNA implements PacAction
     public void init()
     {
         simTime = 0;
-        path = new ArrayList();
+        path = new ArrayList<Point>();
     }
 
     public static int[][] createCostMatrix(PacmanCell pc, PacCell[][] grid)
@@ -187,7 +189,7 @@ public class PacSimRNNA implements PacAction
     public PacFace action(Object state)
     {
         PacCell[][] grid = (PacCell[][]) state;
-        PacmanCell pc = PacUtils.findPackman(grid);
+        PacmanCell pc = PacUtils.findPacman(grid);
 
         if (pc == null)
         {
@@ -201,11 +203,11 @@ public class PacSimRNNA implements PacAction
             int[][] costMatrix = createCostMatrix(pc, grid);
             
             // create and print food array
-            List<Point> foodArray = PacUtils.findFood(state);
+            List<Point> foodArray = PacUtils.findFood((PacCell[][]) state);
 
             System.out.println("Food Array:\n");
 
-            for(i = 0; i < foodArray.size(); i++)
+            for(int i = 0; i < foodArray.size(); i++)
             {
                 System.out.println(i + " : (" + foodArray.get(i).x + "," + foodArray.get(i).y + ")");
             }
@@ -214,8 +216,9 @@ public class PacSimRNNA implements PacAction
 
             long startTime = System.currentTimeMillis();
             ArrayList<PopulationNode> population = new ArrayList<>();
+            int numNodes = foodArray.size();
 
-            for(i = 0; i < numNodes; i++)
+            for(int i = 0; i < numNodes; i++)
             {
                 System.out.println("Population at step " + (i + 1) + " :");
                 
@@ -241,7 +244,7 @@ public class PacSimRNNA implements PacAction
                     for(int j = 1; j < costMatrix.length; j++)
                     {
                         PopulationNode leastCostNode = new PopulationNode();
-                        currNodeCosts = costMatrix[j][0];
+                        //currNodeCosts = costMatrix[j][0];
 
                         int minCost = Integer.MAX_VALUE;
                         int minIndex = j;
@@ -256,7 +259,7 @@ public class PacSimRNNA implements PacAction
                             }
                         }
 
-                        Point nearestFood = foodArray(minIndex);
+                        Point nearestFood = foodArray.get(minIndex);
 
                         currNode.addToPath(nearestFood);
                         currNode.setPointCost(nearestFood, minCost);
@@ -269,7 +272,7 @@ public class PacSimRNNA implements PacAction
                     for(int j = 0; j < currNode.getPathLength(); j++)
                     {
                         System.out.print("[(" + currNode.getX(j) + currNode.getY(j) + ")]");
-                        System.out.print("," + currNode.getPointCost + "]");    
+                        System.out.print("," + currNode.getPointCost(j) + "]");    
                     }
                     
                     System.out.print("\n");
@@ -291,6 +294,7 @@ public class PacSimRNNA implements PacAction
 
         System.out.println("%5d : From [ %2d, %2d ] go ");
 
+        return face;
         
     }
 
