@@ -149,23 +149,32 @@ public class PacSimRNNA implements PacAction
 
         int[][] matrix = new int[foodCount + 1][foodCount + 1];
 
+        // from Pacman to each food cell
+        /*
+        for(int i = 0; i < foodCount; i++)
+        {
+            int cost = BFSPath.getPath(grid, pc.getLoc(), food.get(i)).size();
+            matrix[0][i + 1] = cost;
+            matrix[i + 1][0] = cost;
+        }
+        */
         // populate cost matrix from every node to every other node (with zeros in diagonal)
-        for(int i = 0; i <= foodCount; i++)
+        for(int i = 0; i < foodCount; i++)
         {
             // fill in columns B - ... (from one food cell to all other food cells)
-            for(int j = 1; j < i; j++)
+            for(int j = 0; j < i; j++)
             {
                 int cost = BFSPath.getPath(grid, food.get(i), food.get(j)).size();
 
-                matrix[i][j] = cost;
-                matrix[j][i] = cost;
+                matrix[i + 1][j + 1] = cost;
+                matrix[j + 1][i + 1] = cost;
             }
             
             int costFromPac = BFSPath.getPath(grid, pc.getLoc(), food.get(i)).size();
             
             // fill in column A and row A (from Pacman to each food cell)
-            matrix[0][i] = costFromPac;
-            matrix[i][0] = costFromPac;          
+            matrix[0][i + 1] = costFromPac;
+            matrix[i + 1][0] = costFromPac;          
         }
 
         // print cost matrix
@@ -175,7 +184,7 @@ public class PacSimRNNA implements PacAction
         {
             for(int j = 0; j < matrix.length; j++)
             {
-                System.out.print("   " + matrix[i][j]);
+                System.out.print("\t" + matrix[i][j]);
             }
             
             System.out.println();
@@ -229,8 +238,10 @@ public class PacSimRNNA implements PacAction
                 {
                     currNode.addToPath(new Point(foodArray.get(i).x, foodArray.get(i).y));
                     currNode.setCost(costMatrix[0][i]);
+                    currNode.setPointCost(0, costMatrix[0][i]);
                     
                     System.out.print(i + " : cost=" + currNode.getCost());
+                    //Point currPoint = new Point(currNode.getX(0), currNode.getY(0));
                     System.out.print(" : [(" + currNode.getX(0) + "," + currNode.getY(0) + ")");
                     System.out.println("," + currNode.getPointCost(0) + "]");
                 }
