@@ -112,6 +112,11 @@ class PopulationNode
     {
         this.path.add(point);
     }
+
+    public HashMap<Point, Integer> getMap()
+    {
+        return this.map;
+    }
 }
 
 public class PacSimRNNA implements PacAction
@@ -227,26 +232,39 @@ public class PacSimRNNA implements PacAction
                 // first step (from pacman to each of the food cells)
                 if(i == 0)
                 {
+                    ArrayList<PopulationNode> popList = new ArrayList<>();
 
                     for(int j = 0; j < numNodes; j++)
                     {
+                        
                         currNode.addToPath(new Point(foodArray.get(j).x, foodArray.get(j).y));
-                        currNode.setCost(costMatrix[0][j + 1]);
-                        currNode.setPointCost(0, costMatrix[0][j + 1]);
+                        //currNode.setCost(costMatrix[0][j + 1]);
+                        currNode.setPointCost(j, costMatrix[0][j + 1]);
+                        currNode.setCost(currNode.getPointCost(j));
 
                         // TODO: sort these in order of increasing cost
-                        System.out.print(j + " : cost=" + currNode.getCost());
-                        System.out.print(" : [(" + currNode.getX(j) + "," + currNode.getY(j) + ")");
-                        System.out.println("," + currNode.getPointCost(0) + "]");
+                        //System.out.print(j + " : cost=" + currNode.getCost());
+                        //System.out.print(" : [(" + currNode.getX(j) + "," + currNode.getY(j) + ")");
+                        //System.out.println("," + currNode.getPointCost(0) + "]");
+                    }
+
+                    HashMap<Point, Integer> map = currNode.getMap();
+
+                    for(int k = 0; k < numNodes; k++)
+                    {
+                        // NOTE FOR LATER: make sure to update cost retrieved by getCost() (seems to be stuck at 5 [first cost])
+                        System.out.print(k + " : cost=" + currNode.getPointCost(k));
+                        System.out.print(" : [(" + currNode.getX(k) + "," + currNode.getY(k) + ")");
+                        System.out.println("," + currNode.getPointCost(k) + "]");
                     }
                 }
 
                 else
                 {
                     // TODO: perform RNNA to determine path to the remaining food cells
-                    Queue<Point> rnnaq = new LinkedList<>();
+                    //Queue<Point> rnnaq = new LinkedList<>();
 
-                    // check cost to reach each other food cell and choose the one(s) with the lowest cost
+                    // find costs to each other food cell and generate list with costs
                     for(int j = 1; j < costMatrix.length; j++)
                     {
                         PopulationNode leastCostNode = new PopulationNode();
