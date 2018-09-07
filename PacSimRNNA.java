@@ -149,15 +149,6 @@ public class PacSimRNNA implements PacAction
 
         int[][] matrix = new int[foodCount + 1][foodCount + 1];
 
-        // from Pacman to each food cell
-        /*
-        for(int i = 0; i < foodCount; i++)
-        {
-            int cost = BFSPath.getPath(grid, pc.getLoc(), food.get(i)).size();
-            matrix[0][i + 1] = cost;
-            matrix[i + 1][0] = cost;
-        }
-        */
         // populate cost matrix from every node to every other node (with zeros in diagonal)
         for(int i = 0; i < foodCount; i++)
         {
@@ -236,14 +227,18 @@ public class PacSimRNNA implements PacAction
                 // first step (from pacman to each of the food cells)
                 if(i == 0)
                 {
-                    currNode.addToPath(new Point(foodArray.get(i).x, foodArray.get(i).y));
-                    currNode.setCost(costMatrix[0][i]);
-                    currNode.setPointCost(0, costMatrix[0][i]);
-                    
-                    System.out.print(i + " : cost=" + currNode.getCost());
-                    //Point currPoint = new Point(currNode.getX(0), currNode.getY(0));
-                    System.out.print(" : [(" + currNode.getX(0) + "," + currNode.getY(0) + ")");
-                    System.out.println("," + currNode.getPointCost(0) + "]");
+
+                    for(int j = 0; j < numNodes; j++)
+                    {
+                        currNode.addToPath(new Point(foodArray.get(j).x, foodArray.get(j).y));
+                        currNode.setCost(costMatrix[0][j + 1]);
+                        currNode.setPointCost(0, costMatrix[0][j + 1]);
+
+                        // TODO: sort these in order of increasing cost
+                        System.out.print(j + " : cost=" + currNode.getCost());
+                        System.out.print(" : [(" + currNode.getX(j) + "," + currNode.getY(j) + ")");
+                        System.out.println("," + currNode.getPointCost(0) + "]");
+                    }
                 }
 
                 else
@@ -282,7 +277,7 @@ public class PacSimRNNA implements PacAction
 
                     for(int j = 0; j < currNode.getPathLength(); j++)
                     {
-                        System.out.print("[(" + currNode.getX(j) + currNode.getY(j) + ")]");
+                        System.out.print("[(" + currNode.getX(j) + currNode.getY(j) + ")," + currNode.getPointCost(j) + "]");
                         System.out.print("," + currNode.getPointCost(j) + "]");    
                     }
                     
