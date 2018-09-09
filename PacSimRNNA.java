@@ -26,20 +26,33 @@ class Candidate
     private int cost;
     private ArrayList<Point> path;
     private HashMap<Point, Integer> map;
+    private List<Point> remainingFood;
 
-    public Candidate()
+    public Candidate(List<Point> food)
     {
         cost = 0;
         path = new ArrayList<Point>();
         map = new HashMap<Point, Integer>();
+        remainingFood = food;
 
     }
 
-    public Candidate(int cost)
+    public Candidate(int cost, List<Point> food)
     {
         this.cost = cost;
         path = new ArrayList<Point>();
         map = new HashMap<Point, Integer>();
+        remainingFood = food;
+    }
+
+    public void removeFood(Point point)
+    {
+        this.remainingFood.remove(point);
+    }
+
+    public List<Point> getRemainingFood()
+    {
+        return this.remainingFood;
     }
 
     public int getPathLength()
@@ -148,21 +161,23 @@ public class PacSimRNNA implements PacAction
         path = new ArrayList<Point>();
     }
 
-    public ArrayList<Object> nearestNeighbor(Point pcLoc, int[][] costMatrix, List<Point> food, Candidate currCandidate, HashMap<Point, Integer> pointToIndex)
+    public ArrayList<Object> nearestNeighbor(Point pcLoc, int[][] costMatrix, Candidate currCandidate, HashMap<Point, Integer> pointToIndex)
     {
         // note to self: pcLoc is not Pacman's actual current location, but which food dot he will go to in step 1, 
         // or the next planned step in any of the other population steps
 
         // find lowest cost from Pacman's current location (one of the food cells) to another food cell
+        List<Point> food = currCandidate.getRemainingFood();
         int currFoodCell = food.indexOf(pcLoc);
         food.remove(pcLoc);
+        currCandidate.removeFood(pcLoc);
 
         int minCost = Integer.MAX_VALUE;
         int minIndex = 0;
 
         for(int i = 0; i < food.size(); i++)
         {
-            if (!currCandidate.getPath().contains(food.get(i)) && costMatrix[currFoodCell + 1][pointToIndex.get(food.get(i))] < minCost)
+            if (!currCandidate.getPath().contains(food.get(i)) && costMatrix[currFoodCell + 1][pointToIndex.get(food.get(i))] < minCost && costMatrix[currFoodCell + 1][pointToIndex.get(food.get(i))] != 0)
             {
                 minCost = costMatrix[currFoodCell + 1][pointToIndex.get(food.get(i))];
                 minIndex = i;
@@ -171,6 +186,18 @@ public class PacSimRNNA implements PacAction
 
         // check to see if branching is needed (equal cost to multiple food cells)
         // retval: [0] holds minCost, [1:] holds all points with a cost of minCost
+
+        System.out.println("min cost = " + minCost);
+        System.out.println("min index = " + minIndex);
+        System.out.println("food array size = " + food.size());
+
+        /*
+        for(int i = 0; i < food.size(); i++)
+        {
+            System.out.println(food.get(i));
+        }
+        */
+
         ArrayList<Object> retval = new ArrayList<>();
         retval.add(minCost);
         retval.add(food.get(minIndex));
@@ -274,11 +301,9 @@ public class PacSimRNNA implements PacAction
                 // first step (from pacman to each of the food cells)
                 if(i == 0)
                 {
-                    ArrayList<Candidate> popList = new ArrayList<>();
-
                     for(int j = 0; j < foodArray.size(); j++)
                     {
-                        Candidate currCandidate = new Candidate();
+                        Candidate currCandidate = new Candidate(foodArray);
                         Point tempPoint = new Point(foodArray.get(j).x, foodArray.get(j).y);
                         currCandidate.addToPath(tempPoint);
                         //currCandidate.setCost(costMatrix[0][j + 1]);
@@ -288,7 +313,6 @@ public class PacSimRNNA implements PacAction
                         candidateList.add(currCandidate);
                     }
 
-                    //HashMap<Point, Integer> map = currCandidate.getMap();
                     populationList.add(candidateList);
 
                     Collections.sort(candidateList, new Comparator<Candidate>() {
@@ -320,39 +344,70 @@ public class PacSimRNNA implements PacAction
                         index++;
                     }
 
-                    // new
-
                 }
 
                 // usual RNNA steps  (from a food cell to the other food cells)
                 else
                 {
-                    // TODO: perform RNNA to determine path to the remaining food cells
-                    //Queue<Point> rnnaq = new LinkedList<>();
                     ArrayList<Candidate> currCandidateList = populationList.get(i - 1);
                     // find costs to each other food cell and generate list with costs
-                    for(int j = 1; j < currCandidateList.size(); j++)
+                    for(int j = 0; j < currCandidateList.size(); j++)
                     {
                         Candidate currCandidate = currCandidateList.get(j);
-                        //currCandidateCosts = costMatrix[j][0];
 
-                        int minCost = Integer.MAX_VALUE;
-                        int minIndex = j;
+                        ArrayList<Object> nearestNeighbors = nearestNeighbor(
+                            currCandidate.getPoint(currCandidate.getPathLength() - 1), 
+                            costMatrix, 
+                            currCandidate, 
+                            pointToIndex
+                        );
 
-                        // find min cost among other food cells
-                        for(int k = 0; k < foodArray.size() && k + 1 != j; k++)
+                        int minCost = (int) nearestNeighbors.get(0);
+
+                        if(nearestNeighbors.size() > 2)
                         {
-                            if(costMatrix[j][k] < minCost)
+                            Candidate copyCandidate = currCandidate;
+                            // handle branching case (add new candidates to list)
+                            for(int k = 1; k < nearestNeighbors.size(); k++)
                             {
-                                minCost = costMatrix[j][k];
-                                minIndex = k;
+                                copyCandidate.addToPath((Point) nearestNeighbors.get(k));
+                                copyCandidate.setPointCost((Point) nearestNeighbors.get(k), minCost);
+                                copyCandidate.setCost(copyCandidate.getCost() + minCost);
+
+                                currCandidateList.add(copyCandidate);
                             }
                         }
+                        else
+                        {
+                            // handle usual case (no branching)
+                            Point nearestFood = (Point) nearestNeighbors.get(1);
+                            currCandidate.addToPath(nearestFood);
+                            currCandidate.setPointCost(nearestFood, minCost);
+                            currCandidate.setCost(currCandidate.getCost() + minCost);
 
-                        currCandidate.addToPath(nearestFood);
-                        currCandidate.setPointCost(nearestFood, minCost);
-                        currCandidate.setCost(currCandidate.getCost() + minCost);
+                            currCandidateList.add(currCandidate);
+                        }
                         
+                        populationList.add(candidateList);
+
+                        Collections.sort(currCandidateList, new Comparator<Candidate>() {
+                            @Override
+                            public int compare(Candidate cand1, Candidate cand2)
+                            {
+                                if(cand1.getCost() > cand2.getCost())
+                                {
+                                    return 1;
+                                }
+                                else if(cand1.getCost() < cand2.getCost())
+                                {
+                                    return -1;
+                                }
+                                else
+                                {
+                                    return 0;
+                                }
+                            }
+                        });
                     }
 
                     for(int j = 0; j < currCandidateList.size(); j++)
