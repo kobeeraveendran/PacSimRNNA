@@ -148,6 +148,46 @@ public class PacSimRNNA implements PacAction
         path = new ArrayList<Point>();
     }
 
+    public ArrayList<Object> nearestNeighbor(Point pcLoc, int[][] costMatrix, List<Point> food, Candidate currCandidate, HashMap<Point, Integer> pointToIndex)
+    {
+        // note to self: pcLoc is not Pacman's actual current location, but which food dot he will go to in step 1, 
+        // or the next planned step in any of the other population steps
+
+        // find lowest cost from Pacman's current location (one of the food cells) to another food cell
+        int currFoodCell = food.indexOf(pcLoc);
+        food.remove(pcLoc);
+
+        int minCost = Integer.MAX_VALUE;
+        int minIndex = 0;
+
+        for(int i = 0; i < food.size(); i++)
+        {
+            if (!currCandidate.getPath().contains(food.get(i)) && costMatrix[currFoodCell + 1][pointToIndex.get(food.get(i))] < minCost)
+            {
+                minCost = costMatrix[currFoodCell + 1][pointToIndex.get(food.get(i))];
+                minIndex = i;
+            }
+        }
+
+        // check to see if branching is needed (equal cost to multiple food cells)
+        // retval: [0] holds minCost, [1:] holds all points with a cost of minCost
+        ArrayList<Object> retval = new ArrayList<>();
+        retval.add(minCost);
+        retval.add(food.get(minIndex));
+
+        // add any other points that have an equal cost
+        for(int i = 0; i < food.size(); i++)
+        {
+            if(i != minIndex && costMatrix[currFoodCell + 1][pointToIndex.get(food.get(i))] == minCost)
+            {
+                retval.add(food.get(i));
+            }
+        }
+
+        return retval;
+
+    }
+
     @Override
     public PacFace action(Object state)
     {
@@ -207,9 +247,12 @@ public class PacSimRNNA implements PacAction
 
             System.out.println("Food Array:\n");
 
+            HashMap<Point, Integer> pointToIndex = new HashMap<>();
+
             for(int i = 0; i < foodArray.size(); i++)
             {
                 System.out.println(i + " : (" + foodArray.get(i).x + "," + foodArray.get(i).y + ")");
+                pointToIndex.put(foodArray.get(i), i + 1);
             }
 
             // plan generation timer
@@ -306,8 +349,6 @@ public class PacSimRNNA implements PacAction
                             }
                         }
 
-                        Point nearestFood = foodArray.get(minIndex);
-
                         currCandidate.addToPath(nearestFood);
                         currCandidate.setPointCost(nearestFood, minCost);
                         currCandidate.setCost(currCandidate.getCost() + minCost);
@@ -317,9 +358,9 @@ public class PacSimRNNA implements PacAction
                     for(int j = 0; j < currCandidateList.size(); j++)
                     {
                         Candidate currCandidate = currCandidateList.get(j);
-                        System.out.print(j + " : cost=" + currCandidate.getCost());
-                        System.out.print("[(" + currCandidate.getX(j) + currCandidate.getY(j) + ")," + currCandidate.getPointCost(j) + "]");
-                        System.out.print("," + currCandidate.getPointCost(j) + "]");    
+                        System.out.print(j + " : cost=" + currCandidate.getCost() + " : ");
+                        System.out.print("[(" + currCandidate.getX(j) + "," + currCandidate.getY(j) + ")," + currCandidate.getPointCost(j) + "]");
+                        System.out.println("," + currCandidate.getPointCost(j) + "]");    
                     }
                     
                     System.out.print("\n");
