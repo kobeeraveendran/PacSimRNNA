@@ -191,12 +191,12 @@ public class PacSimRNNA implements PacAction
         System.out.println("min index = " + minIndex);
         System.out.println("food array size = " + food.size());
 
-        /*
+        
         for(int i = 0; i < food.size(); i++)
         {
-            System.out.println(food.get(i));
+            System.out.println("(" + food.get(i).x + "," + food.get(i).y + ")");
         }
-        */
+        
 
         ArrayList<Object> retval = new ArrayList<>();
         retval.add(minCost);
