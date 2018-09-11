@@ -19,12 +19,13 @@ import pacsim.PacSim;
  * Author: Kobee Raveendran
  */
 
-class Candiate
+class Candidate
 {
     private int cost;
     private ArrayList<Point> path;
     private HashMap<Point, Integer> map;
     private List<Point> remainingFood;
+    
     public Candidate(List<Point> food)
     {
         cost = 0;
@@ -60,6 +61,12 @@ class Candiate
     {
        return map.get(point);
     }
+
+    public int getPointCost(int i)
+    {
+        return map.get(path.get(i));
+    }
+
     public void setPointCost(Point point, int cost)
     {
         map.put(point, cost);
@@ -177,7 +184,7 @@ public class PacSimRNNA implements PacAction
                     int cost = BFSPath.getPath(grid, food.get(i), food.get(j)).size();
 
                     costMatrix[i + 1][j + 1] = cost;
-                    costmatrix[j + 1][i + 1] = cost;
+                    costMatrix[j + 1][i + 1] = cost;
                 }
 
                 int costFromPac = BFSPath.getPath(grid, pc.getLoc(), food.get(i)).size();
@@ -191,7 +198,7 @@ public class PacSimRNNA implements PacAction
             {
                 for (int j = 0; j < costMatrix.length; j++)
                 {
-                    System.out.println("\t" + costMatrix[i][j]);
+                    System.out.print("\t" + costMatrix[i][j]);
                 }
 
                 System.out.println();
@@ -199,7 +206,7 @@ public class PacSimRNNA implements PacAction
 
             List<Point> foodArray = PacUtils.findFood((PacCell[][]) state);
 
-            System.out.println("Food Array:\n");
+            System.out.println("\nFood Array:\n");
 
             HashMap<Point, Integer> pointToIndex = new HashMap<>();
 
@@ -208,6 +215,78 @@ public class PacSimRNNA implements PacAction
                 System.out.println(i + " : (" + foodArray.get(i).x + "," + foodArray.get(i).y + ")");
                 pointToIndex.put(foodArray.get(i), i + 1);
             }
+
+            // plan generation timer
+            long startTime = System.currentTimeMillis();
+
+            ArrayList<Candidate> prevPopulation = new ArrayList<>();
+
+            // population steps
+            for (int i = 0; i < foodArray.size(); i++)
+            {
+                System.out.println("\nPopulation at step " + (i + 1) + " :");
+
+                ArrayList<Candidate> candidateList = new ArrayList<>();
+
+                int numEntries = Math.max(foodArray.size(), prevPopulation.size());
+
+                // pop step 1: from pacman to initial food dot
+                if (i == 0)
+                {
+                    for (int j = 0; j < foodArray.size(); j++)
+                    {
+                        Candidate currCandidate = new Candidate(new ArrayList<Point>(foodArray));
+                        Point tempPoint = new Point(foodArray.get(j).x, foodArray.get(j).y);
+                        currCandidate.addToPath(tempPoint);
+                        currCandidate.removeFood(tempPoint);
+                        currCandidate.setPointCost(tempPoint, costMatrix[0][j + 1]);
+                        currCandidate.setCost(currCandidate.getPointCost(tempPoint));
+
+                        candidateList.add(currCandidate);
+                    }
+
+                    prevPopulation = candidateList;
+
+                    Collections.sort(candidateList, new Comparator<Candidate>() {
+                        @Override
+                        public int compare(Candidate cand1, Candidate cand2)
+                        {
+                            if (cand1.getCost() > cand2.getCost())
+                            {
+                                return 1;
+                            }
+                            else if (cand1.getCost() < cand2.getCost())
+                            {
+                                return -1;
+                            }
+                            else
+                            {
+                                return 0;
+                            }
+                        }
+                    });
+
+                    int index = 0;
+
+                    for (Candidate cand : candidateList)
+                    {
+                        System.out.print(index + " : cost=" + cand.getCost());
+                        System.out.print(" : [(" + cand.getX(0) + "," + cand.getY(0) + ")");
+                        System.out.println("," + cand.getPointCost(0) + "]");
+                        index++;
+                    }
+                }
+
+                else
+                {
+                    continue;
+                }
+            }
         }
+        
+        Point next = path.remove(0);
+        PacFace face = PacUtils.direction(pc.getLoc(), next);
+
+        return face;
     }
 }
