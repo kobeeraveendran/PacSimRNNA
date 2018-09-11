@@ -24,7 +24,7 @@ class Candidate
     private int cost;
     private ArrayList<Point> path;
     private HashMap<Point, Integer> map;
-    private List<Point> remainingFood;
+    private ArrayList<Point> remainingFood;
     
     public Candidate(List<Point> food)
     {
@@ -41,7 +41,7 @@ class Candidate
     {
         this.remainingFood.remove(point);
     }
-    public List<Point> getRemainingFood()
+    public ArrayList<Point> getRemainingFood()
     {
         return this.remainingFood;
     }
@@ -245,8 +245,6 @@ public class PacSimRNNA implements PacAction
                         candidateList.add(currCandidate);
                     }
 
-                    prevPopulation = candidateList;
-
                     Collections.sort(candidateList, new Comparator<Candidate>() {
                         @Override
                         public int compare(Candidate cand1, Candidate cand2)
@@ -266,6 +264,8 @@ public class PacSimRNNA implements PacAction
                         }
                     });
 
+                    prevPopulation = candidateList;
+
                     int index = 0;
 
                     for (Candidate cand : candidateList)
@@ -279,8 +279,73 @@ public class PacSimRNNA implements PacAction
 
                 else
                 {
-                    continue;
+                    candidateList = new ArrayList<>(prevPopulation);
+
+                    for (int j = 0; j < candidateList.size(); j++)
+                    {
+                        Candidate currCandidate = currCandidate.get(j);
+
+                        ArrayList<Object> nearestNeighbors = nearestNeighbor(
+                            currCandidate.getPoint(i - 1), costMatrix, currCandidate, pointToIndex
+                        );
+
+                        int minCost = (int) nearestNeighbors.get(0);
+
+                        if (nearestNeighbors.size() > 2)
+                        {
+
+                            for (int k = 1; k < nearestNeighbors.size(); k++)
+                            {
+                                Point temp = (Point) nearestNeighbors.get(k);
+                                Point point = new Point(temp.x, temp.y);
+
+                                currCandidate.addToPath(point);
+                                currCandidate.setPointCost(point, minCost);
+                                currCandidate.setCost(currCandidate.getCost() + minCost);
+
+                                candidateList.add(currCandidate);
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        Collections.sort(candidateList, new Comparator<Candidate>() {
+                            @Override
+                            public int compare(Candidate cand1, Candidate cand2)
+                            {
+                                if (cand1.getCost() > cand2.getCost())
+                                {
+                                    return 1;
+                                }
+                                else if (cand1.getCost() < cand2.getCost())
+                                {
+                                    return -1;
+                                }
+                                else
+                                {
+                                    return 0;
+                                }
+                            }
+                        });
+
+                        for (int j = 0; j < candidateList.size(); j++)
+                        {
+                            currCandidate = candidateList.get(j);
+
+                            System.out.print(j + " : cost=" + currCandidate.getCost() + " : ");
+                            System.out.print("[(" + currCandidate.getX(j) + "," + currCandidate.getY(j) + "),");
+                            System.out.println(currCandidate.getPointCost(j) + "]");
+                        }
+
+                        System.out.println();
+                    }
                 }
+
+                long timeElapsed = System.currentTimeMillis() - startTime;
+
+                System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
             }
         }
         
