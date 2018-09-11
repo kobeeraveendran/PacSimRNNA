@@ -87,10 +87,33 @@ class Candidate
     {
         return this.path;
     }
+
+    public void setPath(List<Point> newPath)
+    {
+        this.path.clear();
+
+        // might have to make this newPath.size() - 1 to avoid adding duplicate points
+        for (int i = 0; i < newPath.size(); i++)
+        {
+            this.path.add(newPath.get(i));
+        }
+    }
+
+    public void setPath(List<Point> newPath, int end)
+    {
+        this.path.clear();
+
+        for (int i = 0; i < end; i++)
+        {
+            this.path.add(newPath.get(i));
+        }
+    }
+
     public void addToPath(Point point)
     {
         this.path.add(point);
     }
+
     public HashMap<Point, Integer> getMap()
     {
         return this.map;
@@ -302,9 +325,20 @@ public class PacSimRNNA implements PacAction
                 {
                     candidateList = new ArrayList<>(prevPopulation);
 
-                    for (int j = 0; j < candidateList.size(); j++)
+                    ArrayList<Candidate> copyCandList = new ArrayList<>();
+
+                    int numCandidates = candidateList.size();
+
+                    for (int j = 0; j < numCandidates; j++)
                     {
-                        Candidate currCandidate = candidateList.get(j);
+                        copyCandList.add(candidateList.get(j));
+                    }
+
+                    for (int j = 0; j < numCandidates; j++)
+                    {
+                        Candidate currCandidate = copyCandList.get(j);
+
+                        System.out.println("This point: (" + currCandidate.getPoint(i - 1).x + "," + currCandidate.getPoint(i - 1).y + ")");
 
                         ArrayList<Object> nearestNeighbors = nearestNeighbor(
                             currCandidate.getPoint(i - 1), costMatrix, currCandidate, pointToIndex
@@ -313,8 +347,6 @@ public class PacSimRNNA implements PacAction
                         int minCost = (int) nearestNeighbors.get(0);
 
                         System.out.println("minCost of this candidate: " + minCost);
-
-                        System.out.println("This point: (" + currCandidate.getPoint(i - 1).x + "," + currCandidate.getPoint(i - 1).y + ")");
 
                         System.out.println("Contents of nearestNeighbors(): ");
                         
@@ -335,7 +367,30 @@ public class PacSimRNNA implements PacAction
                             {
                                 Point temp = (Point) nearestNeighbors.get(k);
                                 Point point = new Point(temp.x, temp.y);
+                                List<Point> tempFood = new ArrayList<>(currCandidate.getRemainingFood());
+                                /*
 
+                                if (k == 1)
+                                {
+                                    currCandidate.addToPath(point);
+                                    currCandidate.setPointCost(point, minCost);
+                                    currCandidate.setCost(currCandidate.getCost() + minCost);
+                                    
+                                    candidateList.add(currCandidate);
+                                }
+                                else
+                                {
+                                    Candidate tempCandidate = new Candidate(tempFood);
+                                    tempCandidate.setPath(currCandidate.getPath(), currCandidate.getPathLength() - 1);
+                                    tempCandidate.setCost(currCandidate.getCost());
+
+                                    tempCandidate.addToPath(point);
+                                    tempCandidate.setPointCost(point, minCost);
+                                    
+                                    candidateList.add(tempCandidate);
+                                }
+                                */
+                                
                                 currCandidate.addToPath(point);
                                 currCandidate.setPointCost(point, minCost);
                                 currCandidate.setCost(currCandidate.getCost() + minCost);
@@ -345,14 +400,14 @@ public class PacSimRNNA implements PacAction
                         }
                         else
                         {
-                            /*
-                            Point nearestFood = (Point) nearestNeighbors.get(1);
-                            Point point = new Point(nearestFood.x, nearestFood.y);
+                            
+                            Point temp = (Point) nearestNeighbors.get(1);
+                            Point point = new Point(temp.x, temp.y);
 
                             currCandidate.addToPath(point);
                             currCandidate.setPointCost(point, minCost);
                             currCandidate.setCost(currCandidate.getCost() + minCost);
-                            */
+                            
                         }
 
                         Collections.sort(candidateList, new Comparator<Candidate>() {
