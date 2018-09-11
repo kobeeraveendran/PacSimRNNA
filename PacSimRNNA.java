@@ -152,5 +152,62 @@ public class PacSimRNNA implements PacAction
         return retval;
     }
 
-    
+    @Override
+    public PacFace action(Object state)
+    {
+        PacCell[][] grid = (PacCell[][]) state;
+        PacmanCell pc = PacUtils.findPacman(grid);
+
+        if (pc == null)
+        {
+            return null;
+        }
+
+        if (path.isEmpty())
+        {
+            List<Point> food = PacUtils.findFood(grid);
+            int foodCount = food.size();
+
+            int[][] costMatrix = new int[foodCount + 1][foodCount + 1];
+
+            for (int i = 0; i < foodCount; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    int cost = BFSPath.getPath(grid, food.get(i), food.get(j)).size();
+
+                    costMatrix[i + 1][j + 1] = cost;
+                    costmatrix[j + 1][i + 1] = cost;
+                }
+
+                int costFromPac = BFSPath.getPath(grid, pc.getLoc(), food.get(i)).size();
+                costMatrix[0][i + 1] = costFromPac;
+                costMatrix[i + 1][0] = costFromPac;
+            }
+
+            System.out.println("Cost table:\n");
+
+            for (int i = 0; i < costMatrix.length; i++)
+            {
+                for (int j = 0; j < costMatrix.length; j++)
+                {
+                    System.out.println("\t" + costMatrix[i][j]);
+                }
+
+                System.out.println();
+            }
+
+            List<Point> foodArray = PacUtils.findFood((PacCell[][]) state);
+
+            System.out.println("Food Array:\n");
+
+            HashMap<Point, Integer> pointToIndex = new HashMap<>();
+
+            for (int i = 0; i < foodArray.size(); i++)
+            {
+                System.out.println(i + " : (" + foodArray.get(i).x + "," + foodArray.get(i).y + ")");
+                pointToIndex.put(foodArray.get(i), i + 1);
+            }
+        }
+    }
 }
