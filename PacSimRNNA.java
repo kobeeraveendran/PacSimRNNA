@@ -332,18 +332,18 @@ public class PacSimRNNA implements PacAction
                 {
                     candidateList = new ArrayList<>(prevPopulation);
 
-                    ArrayList<Candidate> copyCandList = new ArrayList<>();
+                    ArrayList<Candidate> origCandList = new ArrayList<>();
 
                     int numCandidates = candidateList.size();
 
                     for (int j = 0; j < numCandidates; j++)
                     {
-                        copyCandList.add(candidateList.get(j));
+                        origCandList.add(candidateList.get(j));
                     }
 
                     for (int j = 0; j < numCandidates; j++)
                     {
-                        Candidate currCandidate = copyCandList.get(j);
+                        Candidate currCandidate = origCandList.get(j);
 
                         //System.out.println("This point: (" + currCandidate.getPoint(i - 1).x + "," + currCandidate.getPoint(i - 1).y + ")");
 
@@ -377,7 +377,7 @@ public class PacSimRNNA implements PacAction
                             currCandidate.setPointCost(point, minCost);
                             currCandidate.setCost(currCandidate.getCost() + minCost);
 
-                            System.out.println(">2 zone candidate: " + currCandidate.getPath());
+                            //System.out.println(">2 zone candidate: " + currCandidate.getPath());
 
                             candidateList.add(currCandidate);
                             
@@ -433,15 +433,6 @@ public class PacSimRNNA implements PacAction
 
                     }
 
-
-
-                    System.out.println("Candidate list before sorting");
-
-                    for (int k = 0; k < candidateList.size(); k++)
-                    {
-                        System.out.println(candidateList.get(k).getPath());
-                    }
-
                     Collections.sort(candidateList, new Comparator<Candidate>() {
                         @Override
                         public int compare(Candidate cand1, Candidate cand2)
@@ -477,6 +468,24 @@ public class PacSimRNNA implements PacAction
                         
                     }
 
+                    if (i == foodArray.size() - 1)
+                    {
+                        path.add(candidateList.get(0).getPath().get(0));
+                        List<Point> innerSteps;
+
+                        for (int j = 0; j < candidateList.get(0).getPathLength() - 1; j++)
+                        {
+                            //path.add(candidateList.get(0).getPoint(j));
+                            // add the intermediate cells in the path from one food dot to another
+                            innerSteps = BFSPath.getPath(grid, candidateList.get(0).getPath().get(j), candidateList.get(0).getPath().get(j + 1));
+                            
+                            for (int k = 0; k < innerSteps.size(); k++)
+                            {
+                                path.add(innerSteps.get(k));
+                            }
+                        }
+                    }
+
                     System.out.println();
                 }
                 
@@ -485,6 +494,8 @@ public class PacSimRNNA implements PacAction
             long timeElapsed = System.currentTimeMillis() - startTime;
 
             System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
+
+
         }
         
         Point next = path.remove(0);
