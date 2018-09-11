@@ -193,6 +193,13 @@ public class PacSimRNNA implements PacAction
             }
         }
 
+        /*
+        for (int i = 0; i < retval.size(); i++)
+        {
+            System.out.println(retval.get(i));
+        }
+        */
+
         return retval;
     }
 
@@ -338,7 +345,7 @@ public class PacSimRNNA implements PacAction
                     {
                         Candidate currCandidate = copyCandList.get(j);
 
-                        System.out.println("This point: (" + currCandidate.getPoint(i - 1).x + "," + currCandidate.getPoint(i - 1).y + ")");
+                        //System.out.println("This point: (" + currCandidate.getPoint(i - 1).x + "," + currCandidate.getPoint(i - 1).y + ")");
 
                         ArrayList<Object> nearestNeighbors = nearestNeighbor(
                             currCandidate.getPoint(i - 1), costMatrix, currCandidate, pointToIndex
@@ -346,58 +353,70 @@ public class PacSimRNNA implements PacAction
 
                         int minCost = (int) nearestNeighbors.get(0);
 
-                        System.out.println("minCost of this candidate: " + minCost);
+                        //System.out.println("minCost of this candidate: " + minCost);
 
-                        System.out.println("Contents of nearestNeighbors(): ");
+                        //System.out.println("Contents of nearestNeighbors(): ");
                         
-                        
+                        /*
                         for (int k = 1; k < nearestNeighbors.size(); k++)
                         {
                             Point thisPoint = (Point) nearestNeighbors.get(k);
                             System.out.println("(" + thisPoint.x + "," + thisPoint.y + ")");
                         }
-                        
+                        */
 
                         //System.out.println("\n");
 
                         if (nearestNeighbors.size() > 2)
                         {
 
-                            for (int k = 1; k < nearestNeighbors.size(); k++)
+                            Point temp = (Point) nearestNeighbors.get(1);
+                            Point point = new Point(temp.x, temp.y);
+                            
+                            currCandidate.addToPath(point);
+                            currCandidate.setPointCost(point, minCost);
+                            currCandidate.setCost(currCandidate.getCost() + minCost);
+
+                            System.out.println(">2 zone candidate: " + currCandidate.getPath());
+
+                            candidateList.add(currCandidate);
+                            
+                            //System.out.println("Point: " + point);
+                            
+                            /*
+                            for (int k = 2; k < nearestNeighbors.size(); k++)
                             {
-                                Point temp = (Point) nearestNeighbors.get(k);
-                                Point point = new Point(temp.x, temp.y);
+                                temp = (Point) nearestNeighbors.get(k);
+
+                                point = new Point(temp.x, temp.y);
+
+                                //System.out.println("Point: " + point);
+
                                 List<Point> tempFood = new ArrayList<>(currCandidate.getRemainingFood());
-                                /*
-
-                                if (k == 1)
-                                {
-                                    currCandidate.addToPath(point);
-                                    currCandidate.setPointCost(point, minCost);
-                                    currCandidate.setCost(currCandidate.getCost() + minCost);
-                                    
-                                    candidateList.add(currCandidate);
-                                }
-                                else
-                                {
-                                    Candidate tempCandidate = new Candidate(tempFood);
-                                    tempCandidate.setPath(currCandidate.getPath(), currCandidate.getPathLength() - 1);
-                                    tempCandidate.setCost(currCandidate.getCost());
-
-                                    tempCandidate.addToPath(point);
-                                    tempCandidate.setPointCost(point, minCost);
-                                    
-                                    candidateList.add(tempCandidate);
-                                }
-                                */
                                 
-                                currCandidate.addToPath(point);
-                                currCandidate.setPointCost(point, minCost);
-                                currCandidate.setCost(currCandidate.getCost() + minCost);
+                                Candidate tempCandidate = new Candidate(tempFood);
 
-                                candidateList.add(currCandidate);
+                                tempCandidate.setPath(currCandidate.getPath(), currCandidate.getPathLength() - 1);
+                                tempCandidate.setCost(currCandidate.getCost());
+
+                                //System.out.println("Temp candidate path: ");
+
+                                tempCandidate.addToPath(point);
+                                tempCandidate.setPointCost(point, minCost);
+
+                                
+                                for (int l = 0; l < tempCandidate.getPathLength(); l++)
+                                {
+                                    System.out.println(tempCandidate.getPath().get(l));
+                                }
+                                
+
+                                candidateList.add(tempCandidate);
                             }
+                            */
+                            
                         }
+
                         else
                         {
                             
@@ -410,26 +429,37 @@ public class PacSimRNNA implements PacAction
                             
                         }
 
-                        Collections.sort(candidateList, new Comparator<Candidate>() {
-                            @Override
-                            public int compare(Candidate cand1, Candidate cand2)
-                            {
-                                if (cand1.getCost() > cand2.getCost())
-                                {
-                                    return 1;
-                                }
-                                else if (cand1.getCost() < cand2.getCost())
-                                {
-                                    return -1;
-                                }
-                                else
-                                {
-                                    return 0;
-                                }
-                            }
-                        });
+
 
                     }
+
+
+
+                    System.out.println("Candidate list before sorting");
+
+                    for (int k = 0; k < candidateList.size(); k++)
+                    {
+                        System.out.println(candidateList.get(k).getPath());
+                    }
+
+                    Collections.sort(candidateList, new Comparator<Candidate>() {
+                        @Override
+                        public int compare(Candidate cand1, Candidate cand2)
+                        {
+                            if (cand1.getCost() > cand2.getCost())
+                            {
+                                return 1;
+                            }
+                            else if (cand1.getCost() < cand2.getCost())
+                            {
+                                return -1;
+                            }
+                            else
+                            {
+                                return 0;
+                            }
+                        }
+                    });
                     
                     for (int j = 0; j < candidateList.size(); j++)
                     {
