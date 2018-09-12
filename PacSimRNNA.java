@@ -142,7 +142,7 @@ public class PacSimRNNA implements PacAction
     @Override
     public void init()
     {
-        simTime = 0;
+        simTime = 1;
         path = new ArrayList<Point>();
     }
 
@@ -495,11 +495,16 @@ public class PacSimRNNA implements PacAction
 
             System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
 
-
+            System.out.println("\nSolution moves:");
         }
         
+
+        Point curr = path.get(0);
         Point next = path.remove(0);
         PacFace face = PacUtils.direction(pc.getLoc(), next);
+
+        System.out.println(simTime + " : From [" + curr.x + ", " + curr.y + " ] go " + face);
+        simTime++;
 
         return face;
     }
