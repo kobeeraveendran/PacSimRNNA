@@ -330,6 +330,7 @@ public class PacSimRNNA implements PacAction
 
                 else
                 {
+                    candidateList.clear();
                     candidateList = new ArrayList<>(prevPopulation);
 
                     ArrayList<Candidate> origCandList = new ArrayList<>();
@@ -380,6 +381,8 @@ public class PacSimRNNA implements PacAction
 
                             //System.out.println(">2 zone candidate: " + currCandidate.getPath());
 
+                            System.out.println("Added branch candidate with point: (" + point.x + "," + point.y + ")");
+
                             candidateList.add(currCandidate);
                             
                             //System.out.println("Point: " + point);
@@ -391,16 +394,7 @@ public class PacSimRNNA implements PacAction
 
                                 point = new Point(temp.x, temp.y);
 
-                                System.out.println("Point: " + point);
-
-                                List<Point> tempFood = new ArrayList<>(currCandidate.getRemainingFood());
-
-                                /*
-                                for (int s = 0; s < tempFood.size(); s++)
-                                {
-                                    System.out.println(tempFood.get(s));
-                                }
-                                */
+                                List<Point> tempFood = new ArrayList<>(currCandidate.getRemainingFood());                                
                                 
                                 Candidate tempCandidate = new Candidate(tempFood);
 
@@ -418,10 +412,13 @@ public class PacSimRNNA implements PacAction
                                 {
                                     System.out.println(tempCandidate.getPath().get(l));
                                 }
+
+                                System.out.println("Added branch candidate with point: (" + point.x + "," + point.y + ")");
                                 
 
                                 candidateList.add(tempCandidate);
                             }
+                            
                             
                             
                         }
@@ -435,6 +432,8 @@ public class PacSimRNNA implements PacAction
                             currCandidate.addToPath(point);
                             currCandidate.setPointCost(point, minCost);
                             currCandidate.setCost(currCandidate.getCost() + minCost);
+
+                            System.out.println("Added normal candidate with point: (" + point.x + "," + point.y + ")");
                             
                         }
 
