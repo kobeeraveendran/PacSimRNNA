@@ -369,6 +369,7 @@ public class PacSimRNNA implements PacAction
 
                         if (nearestNeighbors.size() > 2)
                         {
+                            
 
                             Point temp = (Point) nearestNeighbors.get(1);
                             Point point = new Point(temp.x, temp.y);
@@ -383,21 +384,29 @@ public class PacSimRNNA implements PacAction
                             
                             //System.out.println("Point: " + point);
                             
-                            /*
+                            
                             for (int k = 2; k < nearestNeighbors.size(); k++)
                             {
                                 temp = (Point) nearestNeighbors.get(k);
 
                                 point = new Point(temp.x, temp.y);
 
-                                //System.out.println("Point: " + point);
+                                System.out.println("Point: " + point);
 
                                 List<Point> tempFood = new ArrayList<>(currCandidate.getRemainingFood());
+
+                                /*
+                                for (int s = 0; s < tempFood.size(); s++)
+                                {
+                                    System.out.println(tempFood.get(s));
+                                }
+                                */
                                 
                                 Candidate tempCandidate = new Candidate(tempFood);
 
                                 tempCandidate.setPath(currCandidate.getPath(), currCandidate.getPathLength() - 1);
                                 tempCandidate.setCost(currCandidate.getCost());
+                                tempCandidate.removeFood(point);
 
                                 //System.out.println("Temp candidate path: ");
 
@@ -413,7 +422,7 @@ public class PacSimRNNA implements PacAction
 
                                 candidateList.add(tempCandidate);
                             }
-                            */
+                            
                             
                         }
 
