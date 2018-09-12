@@ -383,11 +383,18 @@ public class PacSimRNNA implements PacAction
 
                             System.out.println("Added branch candidate with point: (" + point.x + "," + point.y + ")");
 
-                            candidateList.add(currCandidate);
+                            //candidateList.add(currCandidate);
                             
-                            //System.out.println("Point: " + point);
+                            System.out.println("Point: " + point);
+
+                            System.out.println("Current Candidate List: ");
+
+                            for (int k = 0; k < candidateList.size(); k++)
+                            {
+                                System.out.println(candidateList.get(k).getPath());
+                            }
                             
-                            
+                            /*
                             for (int k = 2; k < nearestNeighbors.size(); k++)
                             {
                                 temp = (Point) nearestNeighbors.get(k);
@@ -413,27 +420,27 @@ public class PacSimRNNA implements PacAction
                                     System.out.println(tempCandidate.getPath().get(l));
                                 }
 
-                                System.out.println("Added branch candidate with point: (" + point.x + "," + point.y + ")");
+                                System.out.println("Added branch candidate with point: (" + tempCandidate.getPoint(tempCandidate.getPathLength() - 1).x + "," + tempCandidate.getPoint(tempCandidate.getPathLength() - 1).y + ")");
                                 
 
                                 candidateList.add(tempCandidate);
                             }
-                            
-                            
+                            */
                             
                         }
 
                         else
                         {
                             
-                            Point temp = (Point) nearestNeighbors.get(1);
-                            Point point = new Point(temp.x, temp.y);
+                            Point temp2 = (Point) nearestNeighbors.get(1);
+                            Point point2 = new Point(temp2.x, temp2.y);
 
-                            currCandidate.addToPath(point);
-                            currCandidate.setPointCost(point, minCost);
+                            currCandidate.addToPath(point2);
+                            currCandidate.setPointCost(point2, minCost);
                             currCandidate.setCost(currCandidate.getCost() + minCost);
 
-                            System.out.println("Added normal candidate with point: (" + point.x + "," + point.y + ")");
+                            System.out.println("Added normal candidate with point: (" + point2.x + "," + point2.y + ")");
+                            
                             
                         }
 
