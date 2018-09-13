@@ -169,11 +169,10 @@ public class PacSimRNNA implements PacAction
         int currFoodCell = pointToIndex.get(pcLoc);
 
         // maybe consider moving this
-        currCandidate.removeFood(pcLoc);
 
         int minCost = Integer.MAX_VALUE;
         int minIndex = 0;
-
+        currCandidate.removeFood(pcLoc);
         List<Point> food = currCandidate.getRemainingFood();
 
         for (int i = 0; i < food.size(); i++)
@@ -199,6 +198,8 @@ public class PacSimRNNA implements PacAction
         ArrayList<Object> retval = new ArrayList<>();
         retval.add(minCost);
         retval.add(food.get(minIndex));
+
+        
 
         for (int i = 0; i < food.size(); i++)
         {
@@ -372,6 +373,7 @@ public class PacSimRNNA implements PacAction
 
                         //System.out.println("This point: (" + currCandidate.getPoint(i - 1).x + "," + currCandidate.getPoint(i - 1).y + ")");
 
+                        //System.out.println("Step - 1: " + (i - 1) + ", path length: " + currCandidate.getPathLength());
                         ArrayList<Object> nearestNeighbors = nearestNeighbor(
                             currCandidate.getPoint(i - 1), costMatrix, currCandidate, pointToIndex
                         );
@@ -392,7 +394,7 @@ public class PacSimRNNA implements PacAction
 
                             //System.out.println(">2 zone candidate: " + currCandidate.getPath());
 
-                            System.out.println("Added branch candidate with point: (" + point.x + "," + point.y + ")");
+                            //System.out.println("Added branch candidate with point: (" + point.x + "," + point.y + ")");
 
                             candidateList.add(currCandidate);
                             
@@ -459,7 +461,7 @@ public class PacSimRNNA implements PacAction
                             
                         }
 
-
+                        prevPopulation = candidateList;
 
                     }
 
