@@ -409,14 +409,7 @@ public class PacSimRNNA implements PacAction
                                 //System.out.println("Temp candidate path: ");
 
                                 tempCandidate.addToPath(point);
-                                tempCandidate.setPointCost(point, minCost);
-
-                                
-                                for (int l = 0; l < tempCandidate.getPathLength(); l++)
-                                {
-                                    System.out.println(tempCandidate.getPath().get(l));
-                                }
-                                
+                                tempCandidate.setPointCost(point, minCost);                                
 
                                 candidateList.add(tempCandidate);
                             }
@@ -436,7 +429,7 @@ public class PacSimRNNA implements PacAction
                             
                         }
 
-
+                        prevPopulation = new ArrayList<>(candidateList);
 
                     }
 
@@ -502,7 +495,35 @@ public class PacSimRNNA implements PacAction
 
             System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
 
+            //path.add(prevPopulation.get(0).getPath().get(0));
+            List<Point> innerSteps;
+
+            // steps to get from pacman to food dot
+            
+            List<Point> firstFood = BFSPath.getPath(grid, pc.getLoc(), prevPopulation.get(0).getPath().get(0));
+
+            for (int j = 0; j < firstFood.size(); j++)
+            {
+                path.add(firstFood.get(j));
+            }
+            
+
+            for (int j = 0; j < prevPopulation.get(0).getPathLength() - 1; j++)
+            {
+                //path.add(candidateList.get(0).getPoint(j));
+                // add the intermediate cells in the path from one food dot to another
+                innerSteps = BFSPath.getPath(grid, prevPopulation.get(0).getPath().get(j), prevPopulation.get(0).getPath().get(j + 1));
+                
+                for (int k = 0; k < innerSteps.size(); k++)
+                {
+                    path.add(innerSteps.get(k));
+                }
+            }
+
             System.out.println("\nSolution moves:");
+
+            System.out.println("Pacman's current location: " + pc.getLoc());
+            System.out.println("first node in path: " + path.get(0));
         }
         
 
