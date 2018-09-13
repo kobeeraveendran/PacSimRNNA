@@ -101,7 +101,6 @@ class Candidate
     {
         this.path.clear();
 
-        // might have to make this newPath.size() - 1 to avoid adding duplicate points
         for (int i = 0; i < newPath.size(); i++)
         {
             this.path.add(newPath.get(i));
@@ -159,7 +158,6 @@ public class PacSimRNNA implements PacAction
     {
         int currFoodCell = pointToIndex.get(pcLoc);
 
-        // maybe consider moving this
         currCandidate.removeFood(pcLoc);
 
         int minCost = Integer.MAX_VALUE;
@@ -173,21 +171,10 @@ public class PacSimRNNA implements PacAction
             {
                 if (currFoodCell != pointToIndex.get(food.get(i)) && costMatrix[currFoodCell][pointToIndex.get(food.get(i))] != 0 && costMatrix[currFoodCell][pointToIndex.get(food.get(i))] < minCost)
                 {
-                    //System.out.println("at costMatrix[" + (currFoodCell) + "][" + pointToIndex.get(food.get(i)) + "]");
                     minCost = costMatrix[currFoodCell][pointToIndex.get(food.get(i))];
-                    //System.out.println("minCost = " + minCost);
                     minIndex = i;
-                    //System.out.println("food point: (" + food.get(i).x + "," + food.get(i).y + ")");
                 }
             }
-            /*
-            if (!currCandidate.getPath().contains(food.get(i)) && costMatrix[currFoodCell + 1][pointToIndex.get(food.get(i))] < minCost)
-            {
-                minCost = costMatrix[currFoodCell + 1][pointToIndex.get(food.get(i))];
-                // index in the food array
-                minIndex = i;
-            }
-            */
         }
 
         ArrayList<Object> retval = new ArrayList<>();
@@ -201,13 +188,6 @@ public class PacSimRNNA implements PacAction
                 retval.add(food.get(i));
             }
         }
-
-        /*
-        for (int i = 0; i < retval.size(); i++)
-        {
-            System.out.println(retval.get(i));
-        }
-        */
 
         return retval;
     }
@@ -225,6 +205,9 @@ public class PacSimRNNA implements PacAction
 
         if (path.isEmpty())
         {
+            
+            Point initLoc = pc.getLoc();
+
             List<Point> food = PacUtils.findFood(grid);
             int foodCount = food.size();
 
@@ -352,27 +335,11 @@ public class PacSimRNNA implements PacAction
                     {
                         Candidate currCandidate = origCandList.get(j);
 
-                        //System.out.println("This point: (" + currCandidate.getPoint(i - 1).x + "," + currCandidate.getPoint(i - 1).y + ")");
-
                         ArrayList<Object> nearestNeighbors = nearestNeighbor(
                             currCandidate.getPoint(i - 1), costMatrix, currCandidate, pointToIndex
                         );
 
                         int minCost = (int) nearestNeighbors.get(0);
-
-                        //System.out.println("minCost of this candidate: " + minCost);
-
-                        //System.out.println("Contents of nearestNeighbors(): ");
-                        
-                        /*
-                        for (int k = 1; k < nearestNeighbors.size(); k++)
-                        {
-                            Point thisPoint = (Point) nearestNeighbors.get(k);
-                            System.out.println("(" + thisPoint.x + "," + thisPoint.y + ")");
-                        }
-                        */
-
-                        //System.out.println("\n");
 
                         if (nearestNeighbors.size() > 2)
                         {
@@ -382,22 +349,13 @@ public class PacSimRNNA implements PacAction
                             
                             currCandidate.addToPath(point);
                             currCandidate.setPointCost(point, minCost);
-                            currCandidate.setCost(currCandidate.getCost() + minCost);
-
-                            //System.out.println(">2 zone candidate: " + currCandidate.getPath());
-
-                            //candidateList.add(currCandidate);
-                            
-                            //System.out.println("Point: " + point);
-                            
+                            currCandidate.setCost(currCandidate.getCost() + minCost);                            
                             
                             for (int k = 2; k < nearestNeighbors.size(); k++)
                             {
                                 temp = (Point) nearestNeighbors.get(k);
 
                                 point = new Point(temp);
-
-                                //System.out.println("Point: " + point);
 
                                 List<Point> tempFood = new ArrayList<>(currCandidate.getRemainingFood());
                                 
@@ -406,14 +364,11 @@ public class PacSimRNNA implements PacAction
                                 tempCandidate.setPath(currCandidate.getPath(), currCandidate.getPathLength() - 1);
                                 tempCandidate.setCost(currCandidate.getCost());
 
-                                //System.out.println("Temp candidate path: ");
-
                                 tempCandidate.addToPath(point);
                                 tempCandidate.setPointCost(point, minCost);                                
 
                                 candidateList.add(tempCandidate);
                             }
-                            
                             
                         }
 
@@ -468,6 +423,7 @@ public class PacSimRNNA implements PacAction
                         
                     }
 
+                    /*
                     if (i == foodArray.size() - 1)
                     {
                         path.add(candidateList.get(0).getPath().get(0));
@@ -475,7 +431,6 @@ public class PacSimRNNA implements PacAction
 
                         for (int j = 0; j < candidateList.get(0).getPathLength() - 1; j++)
                         {
-                            //path.add(candidateList.get(0).getPoint(j));
                             // add the intermediate cells in the path from one food dot to another
                             innerSteps = BFSPath.getPath(grid, candidateList.get(0).getPath().get(j), candidateList.get(0).getPath().get(j + 1));
                             
@@ -485,6 +440,7 @@ public class PacSimRNNA implements PacAction
                             }
                         }
                     }
+                    */
 
                     System.out.println();
                 }
@@ -495,17 +451,41 @@ public class PacSimRNNA implements PacAction
 
             System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
 
-            //path.add(prevPopulation.get(0).getPath().get(0));
-            List<Point> innerSteps;
+            path.add(prevPopulation.get(0).getPath().get(0));
+            List<Point> innerSteps = null;
 
             // steps to get from pacman to food dot
             
-            List<Point> firstFood = BFSPath.getPath(grid, pc.getLoc(), prevPopulation.get(0).getPath().get(0));
+            List<Point> toFirstFood = BFSPath.getPath(grid, initLoc, prevPopulation.get(0).getPath().get(0));
+            toFirstFood.remove(0);
 
-            for (int j = 0; j < firstFood.size(); j++)
+            
+            if (initLoc != path.get(0))
             {
-                path.add(firstFood.get(j));
+                
+                for (int j = 0; j < toFirstFood.size(); j++)
+                {
+                    path.add(toFirstFood.get(j));
+                }
+
+                System.out.println("Path so far: ");
+
+                for (int j = 0; j < path.size(); j++)
+                {
+                    System.out.println(path.get(j));
+                }
             }
+            
+
+            /*
+            System.out.println("To first food: ");
+
+            
+            for (int j = 0 ; j < toFirstFood.size(); j++)
+            {
+                System.out.println(toFirstFood.get(j));
+            }
+            */
             
 
             for (int j = 0; j < prevPopulation.get(0).getPathLength() - 1; j++)
@@ -522,8 +502,9 @@ public class PacSimRNNA implements PacAction
 
             System.out.println("\nSolution moves:");
 
-            System.out.println("Pacman's current location: " + pc.getLoc());
             System.out.println("first node in path: " + path.get(0));
+            
+            System.out.println("Pacman's current location: " + pc.getLoc());
         }
         
 
@@ -531,7 +512,8 @@ public class PacSimRNNA implements PacAction
         Point next = path.remove(0);
         PacFace face = PacUtils.direction(pc.getLoc(), next);
 
-        System.out.println(simTime + " : From [ " + curr.x + ", " + curr.y + " ] go " + face);
+        //System.out.println(simTime + " : From [ " + curr.x + ", " + curr.y + " ] go " + face);
+        System.out.println(simTime + " : From [ " + (int) pc.getLoc().getX() + ", " + (int) pc.getLoc().getY() + " ] go " + face);
         simTime++;
 
         return face;
