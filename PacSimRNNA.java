@@ -281,8 +281,6 @@ public class PacSimRNNA implements PacAction
 
                 ArrayList<Candidate> candidateList = new ArrayList<>();
 
-                int numEntries = Math.max(foodArray.size(), prevPopulation.size());
-
                 // pop step 1: from pacman to initial food dot
                 if (i == 0)
                 {
@@ -324,7 +322,7 @@ public class PacSimRNNA implements PacAction
                         }
                     });
 
-                    prevPopulation = candidateList;
+                    prevPopulation = new ArrayList<>(candidateList);
 
                     int index = 0;
 
@@ -388,22 +386,22 @@ public class PacSimRNNA implements PacAction
 
                             //System.out.println(">2 zone candidate: " + currCandidate.getPath());
 
-                            candidateList.add(currCandidate);
+                            //candidateList.add(currCandidate);
                             
                             //System.out.println("Point: " + point);
                             
-                            /*
+                            
                             for (int k = 2; k < nearestNeighbors.size(); k++)
                             {
                                 temp = (Point) nearestNeighbors.get(k);
 
-                                point = new Point(temp.x, temp.y);
+                                point = new Point(temp);
 
                                 //System.out.println("Point: " + point);
 
                                 List<Point> tempFood = new ArrayList<>(currCandidate.getRemainingFood());
                                 
-                                Candidate tempCandidate = new Candidate(tempFood);
+                                Candidate tempCandidate = new Candidate(currCandidate);
 
                                 tempCandidate.setPath(currCandidate.getPath(), currCandidate.getPathLength() - 1);
                                 tempCandidate.setCost(currCandidate.getCost());
@@ -422,7 +420,7 @@ public class PacSimRNNA implements PacAction
 
                                 candidateList.add(tempCandidate);
                             }
-                            */
+                            
                             
                         }
 
@@ -512,7 +510,7 @@ public class PacSimRNNA implements PacAction
         Point next = path.remove(0);
         PacFace face = PacUtils.direction(pc.getLoc(), next);
 
-        System.out.println(simTime + " : From [" + curr.x + ", " + curr.y + " ] go " + face);
+        System.out.println(simTime + " : From [ " + curr.x + ", " + curr.y + " ] go " + face);
         simTime++;
 
         return face;
