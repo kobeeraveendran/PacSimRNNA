@@ -384,8 +384,6 @@ public class PacSimRNNA implements PacAction
                             
                         }
 
-                        prevPopulation = new ArrayList<>(candidateList);
-
                     }
 
                     Collections.sort(candidateList, new Comparator<Candidate>() {
@@ -406,6 +404,8 @@ public class PacSimRNNA implements PacAction
                             }
                         }
                     });
+
+                    prevPopulation = new ArrayList<>(candidateList);
                     
                     for (int j = 0; j < candidateList.size(); j++)
                     {
@@ -423,39 +423,6 @@ public class PacSimRNNA implements PacAction
                         
                     }
 
-                    
-
-                    if (i == foodArray.size() - 1)
-                    {
-
-                        
-                        List<Point> toFirstFood = BFSPath.getPath(grid, initLoc, prevPopulation.get(0).getPath().get(0));
-                        toFirstFood.remove(0);
-
-                        path.add(candidateList.get(0).getPath().get(0));
-                        List<Point> innerSteps;
-
-                        if (initLoc != path.get(0))
-                        {
-                            for (int j = 0; j < toFirstFood.size(); j++)
-                            {
-                                path.add(toFirstFood.get(j));
-                            }
-                        }
-
-                        for (int j = 0; j < candidateList.get(0).getPathLength() - 1; j++)
-                        {
-                            // add the intermediate cells in the path from one food dot to another
-                            innerSteps = BFSPath.getPath(grid, candidateList.get(0).getPath().get(j), candidateList.get(0).getPath().get(j + 1));
-                            
-                            for (int k = 0; k < innerSteps.size(); k++)
-                            {
-                                path.add(innerSteps.get(k));
-                            }
-                        }
-                    }
-                    
-
                     System.out.println();
                 }
                 
@@ -465,15 +432,13 @@ public class PacSimRNNA implements PacAction
 
             System.out.println("Time to generate plan: " + (int) timeElapsed + " msec");
 
-            path.add(prevPopulation.get(0).getPath().get(0));
-            List<Point> innerSteps = null;
+            
+            List<Point> innerSteps;
 
-            // steps to get from pacman to food dot
-            
-            
-            
-            /*
-            System.out.println("FIRST MOVE TO: (" + prevPopulation.get(0).getPath().get(0).x + "," + prevPopulation.get(0).getPath().get(0).y + ")");
+            // steps to get from pacman to food dot            
+            List<Point> toFirstFood = BFSPath.getPath(grid, initLoc, prevPopulation.get(0).getPath().get(0));
+            toFirstFood.remove(0);
+            path.add(prevPopulation.get(0).getPath().get(0));
 
             
             if (initLoc != path.get(0))
@@ -484,33 +449,18 @@ public class PacSimRNNA implements PacAction
                     path.add(toFirstFood.get(j));
                 }
 
-                
+                /*
                 System.out.println("Path so far: ");
 
                 for (int j = 0; j < path.size(); j++)
                 {
                     System.out.println(path.get(j));
                 }
-                
-            }
-            */
-            
-            //System.out.println("Path length from init to first food: " + path.size());
+                */
+            }            
 
-            /*
-            System.out.println("To first food: ");
-
-            
-            for (int j = 0 ; j < toFirstFood.size(); j++)
-            {
-                System.out.println(toFirstFood.get(j));
-            }
-            */
-            
-            /*
             for (int j = 0; j < prevPopulation.get(0).getPathLength() - 1; j++)
             {
-                //path.add(candidateList.get(0).getPoint(j));
                 // add the intermediate cells in the path from one food dot to another
                 innerSteps = BFSPath.getPath(grid, prevPopulation.get(0).getPath().get(j), prevPopulation.get(0).getPath().get(j + 1));
                 
@@ -519,16 +469,10 @@ public class PacSimRNNA implements PacAction
                     path.add(innerSteps.get(k));
                 }
             }
-            */
-            System.out.println("\nSolution moves:");
 
-            System.out.println("first node in path: " + path.get(0));
-            
-            System.out.println("Pacman's current location: " + pc.getLoc());
+            System.out.println("\nSolution moves:\n");
         }
         
-
-        Point curr = path.get(0);
         Point next = path.remove(0);
         PacFace face = PacUtils.direction(pc.getLoc(), next);
 

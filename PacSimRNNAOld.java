@@ -128,12 +128,12 @@ class Candidate
     }
 }
 
-public class PacSimRNNA implements PacAction
+public class PacSimRNNAOld implements PacAction
 {
     private ArrayList<Point> path;
     private int simTime;
 
-    public PacSimRNNA(String fname)
+    public PacSimRNNAOld(String fname)
     {
         PacSim sim = new PacSim(fname);
         sim.init(this);
@@ -144,7 +144,7 @@ public class PacSimRNNA implements PacAction
         System.out.println("\nTSP using Repetitive Nearest Neighbor Algorithm by Kobee Raveendran:");
         System.out.println("\nMaze : " + args[0] + "\n");
 
-        new PacSimRNNA(args[0]);
+        new PacSimRNNAOld(args[0]);
     }
 
     @Override
@@ -384,7 +384,7 @@ public class PacSimRNNA implements PacAction
                             
                         }
 
-                        prevPopulation = new ArrayList<>(candidateList);
+                        //prevPopulation = new ArrayList<>(candidateList);
 
                     }
 
@@ -406,6 +406,8 @@ public class PacSimRNNA implements PacAction
                             }
                         }
                     });
+
+                    prevPopulation = new ArrayList<>(candidateList);
                     
                     for (int j = 0; j < candidateList.size(); j++)
                     {
