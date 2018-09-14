@@ -423,11 +423,25 @@ public class PacSimRNNA implements PacAction
                         
                     }
 
-                    /*
+                    
+
                     if (i == foodArray.size() - 1)
                     {
+
+                        
+                        List<Point> toFirstFood = BFSPath.getPath(grid, initLoc, prevPopulation.get(0).getPath().get(0));
+                        toFirstFood.remove(0);
+
                         path.add(candidateList.get(0).getPath().get(0));
                         List<Point> innerSteps;
+
+                        if (initLoc != path.get(0))
+                        {
+                            for (int j = 0; j < toFirstFood.size(); j++)
+                            {
+                                path.add(toFirstFood.get(j));
+                            }
+                        }
 
                         for (int j = 0; j < candidateList.get(0).getPathLength() - 1; j++)
                         {
@@ -440,7 +454,7 @@ public class PacSimRNNA implements PacAction
                             }
                         }
                     }
-                    */
+                    
 
                     System.out.println();
                 }
@@ -456,8 +470,10 @@ public class PacSimRNNA implements PacAction
 
             // steps to get from pacman to food dot
             
-            List<Point> toFirstFood = BFSPath.getPath(grid, initLoc, prevPopulation.get(0).getPath().get(0));
-            toFirstFood.remove(0);
+            
+            
+            /*
+            System.out.println("FIRST MOVE TO: (" + prevPopulation.get(0).getPath().get(0).x + "," + prevPopulation.get(0).getPath().get(0).y + ")");
 
             
             if (initLoc != path.get(0))
@@ -468,14 +484,18 @@ public class PacSimRNNA implements PacAction
                     path.add(toFirstFood.get(j));
                 }
 
+                
                 System.out.println("Path so far: ");
 
                 for (int j = 0; j < path.size(); j++)
                 {
                     System.out.println(path.get(j));
                 }
+                
             }
+            */
             
+            //System.out.println("Path length from init to first food: " + path.size());
 
             /*
             System.out.println("To first food: ");
@@ -487,7 +507,7 @@ public class PacSimRNNA implements PacAction
             }
             */
             
-
+            /*
             for (int j = 0; j < prevPopulation.get(0).getPathLength() - 1; j++)
             {
                 //path.add(candidateList.get(0).getPoint(j));
@@ -499,7 +519,7 @@ public class PacSimRNNA implements PacAction
                     path.add(innerSteps.get(k));
                 }
             }
-
+            */
             System.out.println("\nSolution moves:");
 
             System.out.println("first node in path: " + path.get(0));
